@@ -1,0 +1,15 @@
+/* src/components/Login.css */
+
+  
+  .card {
+    transition: transform 0.2s;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  .text-danger {
+    font-weight: bold;
+  }
+  
