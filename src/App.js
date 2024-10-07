@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage'; 
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+
 import CameraInterface from './pages/CameraInterface';
 import PeopleAnalysis from './pages/PeopleAnalysis'; // Import PeopleAnalysis
 
