@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage'; 
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
-
 import CameraInterface from './pages/CameraInterface';
-import PeopleAnalysis from './pages/PeopleAnalysis'; // Import PeopleAnalysis
-
+import PeopleAnalysis from './pages/PeopleAnalysis';
 import QRScanner from './pages/QRScanner';
 import Checkout from './pages/Checkout';
+import PaymentDone from './pages/PaymentDone'; // Import PaymentDone
 import ProtectedRoute from './components/ProtectedRoute'; 
+import GenerateQRCode from './pages/GenerateQRCode';
+import Chatbox from './pages/Chatbox';
+
 import './App.css'; 
 
+import supabase from './components/database';
+
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Change this to manage authentication properly
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -50,7 +55,7 @@ const App = () => {
           } />
           <Route path="/people-analysis" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <PeopleAnalysis /> {/* Add PeopleAnalysis route */}
+              <PeopleAnalysis />
             </ProtectedRoute>
           } />
           <Route path="/qr-scanner" element={
@@ -63,7 +68,19 @@ const App = () => {
               <Checkout />
             </ProtectedRoute>
           } />
+          <Route path="/generate-qr" element={
+            <GenerateQRCode />} />
+
+          <Route path="/payment-done" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <PaymentDone />
+            </ProtectedRoute>
+          } />
         </Routes>
+      </div>
+      {/* Chatbox Component */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', position: 'fixed', bottom: '20px', right: '20px' }}>
+        <Chatbox />
       </div>
       <Footer />
     </Router>

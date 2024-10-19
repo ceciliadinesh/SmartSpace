@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Form, Alert } from 'react-bootstrap';
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useLocation, useNavigate } from 'react-router-dom';
 import QRious from 'qrious';
+import supabase from '../components/database';
+import { FaCheckCircle } from 'react-icons/fa';
 
 const Checkout = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const { cart = [], totalPrice = 0 } = location.state || { cart: [], totalPrice: 0 };
-  const [paymentDetails, setPaymentDetails] = useState({ name: '', cardNumber: '', expiry: '', cvv: '' });
+  const [paymentDetails, setPaymentDetails] = useState({ name: '', cardNumber: '', expiry: '', paymentDate: '' }); // Add paymentDate
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [isGPayScanned, setIsGPayScanned] = useState(false);
+  const [paymentDone, setPaymentDone] = useState(false);
 
   useEffect(() => {
     if (totalPrice > 0) {
@@ -30,26 +33,44 @@ const Checkout = () => {
     setPaymentDetails({ ...paymentDetails, [name]: value });
   };
 
-  const handlePaymentSubmit = (e) => {
+  const handlePaymentSubmit = async (e) => {
     e.preventDefault();
-    if (!paymentDetails.name || !paymentDetails.cardNumber || !paymentDetails.expiry || !paymentDetails.cvv) {
+    if (!paymentDetails.name || !paymentDetails.cardNumber || !paymentDetails.expiry || !paymentDetails.cvv || !paymentDetails.paymentDate) { // Check for paymentDate
       setErrorMessage('Please fill in all payment details.');
       return;
     }
-    setSuccessMessage('Payment successful!');
-    setErrorMessage('');
-    
-    // Redirect to home after payment
-    navigate('/'); // Redirect to home
+
+    const { error } = await supabase.from("payments").insert({
+      "Name": paymentDetails.name,
+      "CardNumber": paymentDetails.cardNumber,
+      "Expiry": paymentDetails.expiry,
+      "PaymentDate": paymentDetails.paymentDate, // Add paymentDate to the database
+      "cart": cart,
+      "price": totalPrice
+    });
+
+    if (!error) {
+      setPaymentDone(true);
+      setSuccessMessage('Payment successful!');
+      setErrorMessage('');
+
+      setTimeout(() => {
+        navigate('/payment-done', { state: { cart, totalPrice, paymentDetails } });
+      }, 2000);
+    } else {
+      setErrorMessage('Payment failed. Please try again.');
+    }
   };
 
   const handleGPay = () => {
     if (isGPayScanned) {
       setSuccessMessage('GPay payment successful!');
       setErrorMessage('');
+      setPaymentDone(true);
       
-      // Redirect to home after GPay payment
-      navigate('/'); // Redirect to home
+      setTimeout(() => {
+        navigate('/payment-done', { state: { cart, totalPrice, paymentDetails } });
+      }, 2000);
     } else {
       setErrorMessage('Please scan the QR code before proceeding with GPay payment.');
     }
@@ -99,8 +120,16 @@ const Checkout = () => {
               <Form.Label>CVV</Form.Label>
               <Form.Control type="text" placeholder="CVV" name="cvv" value={paymentDetails.cvv} onChange={handleInputChange} />
             </Form.Group>
+            <Form.Group controlId="formPaymentDate">
+              <Form.Label>Payment Date</Form.Label>
+              <Form.Control type="date" name="paymentDate" value={paymentDetails.paymentDate} onChange={handleInputChange} />
+            </Form.Group>
             {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
-            {successMessage && <Alert variant="success">{successMessage}</Alert>}
+            {successMessage && (
+              <Alert variant="success">
+                {successMessage} {paymentDone && <FaCheckCircle style={{ marginLeft: '10px', color: 'green' }} />}
+              </Alert>
+            )}
             <Button variant="success" className="mt-3" type="submit" disabled={cart.length === 0}>
               Confirm Purchase
             </Button>

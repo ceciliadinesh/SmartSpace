@@ -1,0 +1,32 @@
+/* PaymentDone.css */
+
+.payment-done-container {
+  background-color: #f8f9fa; /* Light background for the payment done page */
+  padding: 20px; /* Additional padding for the container */
+}
+
+.payment-bill-card {
+  border: 1px solid #dee2e6; /* Light border for the card */
+  border-radius: 15px; /* Rounded corners */
+  background-color: #ffffff; /* White background for the card */
+}
+
+.payment-items-list .payment-item {
+  padding: 10px 0; /* Spacing for items */
+}
+
+.payment-items-list .payment-item:last-child {
+  border-bottom: none; /* Remove the border from the last item */
+}
+
+h5 {
+  font-weight: bold; /* Make headings bold */
+}
+
+button {
+  width: 100%; /* Full width buttons */
+}
+
+button:hover {
+  opacity: 0.9; /* Slightly darken on hover */
+}

@@ -3,6 +3,7 @@ import { Card, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 import '@tensorflow/tfjs';
+import supabase from '../components/database';
 
 const CameraInterface = () => {
   const [showCamera, setShowCamera] = useState(false);
@@ -31,7 +32,7 @@ const CameraInterface = () => {
     };
   };
 
-  const handleStopCamera = () => {
+  const handleStopCamera = async () => {
     const stream = mediaStreamRef.current;
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
@@ -40,8 +41,15 @@ const CameraInterface = () => {
     
     // Update last count and timestamp when stopping the camera
     setLastCount(peopleCount);
+    
     setTimestamp(new Date().toLocaleString());
+    const {error}=await supabase.from("peopledata").insert({
+      "lastCount":peopleCount,
+      "Timestamp":new Date().toLocaleString()
+    })
     setPeopleCount(0); // Reset current count
+    
+    console.log(error)
   };
 
   const detectObjects = (model) => {

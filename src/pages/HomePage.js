@@ -33,10 +33,10 @@ const HomePage = () => {
     },
     {
       id: 3,
-      title: 'Path Tracking with Heatmap',
-      description: 'Track paths taken by customers and visualize them with a heatmap.',
+      title: 'People analysis',
+      description: 'Analyze people by tracking their age group, emotions, and gender for comprehensive analysis.',
       image: require('../images/feature3.jpg'), // Ensure to provide the correct image path
-      link: '/path-tracking',
+      link: '/people-analysis',
     },
     {
       id: 4,

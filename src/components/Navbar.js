@@ -15,6 +15,7 @@ const Navbar = ({ onLogout }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State for mobile menu
+  const [qrMenuOpen, setQrMenuOpen] = useState(null); // State for QR options menu
 
   const handleLogout = () => {
     onLogout();
@@ -28,6 +29,7 @@ const Navbar = ({ onLogout }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+    setQrMenuOpen(null); // Close QR options menu when main menu closes
   };
 
   const handleMobileMenuOpen = (event) => {
@@ -38,6 +40,14 @@ const Navbar = ({ onLogout }) => {
     setMobileMenuOpen(null);
   };
 
+  const handleQrMenuClick = (event) => {
+    setQrMenuOpen(event.currentTarget); // Open QR menu on button click
+  };
+
+  const handleQrMenuClose = () => {
+    setQrMenuOpen(null); // Close QR options menu
+  };
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -45,8 +55,6 @@ const Navbar = ({ onLogout }) => {
         <Typography variant="h6" style={{ flexGrow: 1 }}>
           SmartSpace Analytics
         </Typography>
-
-        
 
         {/* Desktop Buttons */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
@@ -63,9 +71,34 @@ const Navbar = ({ onLogout }) => {
             <MenuItem component={Link} to="/camera-interface" onClick={handleMenuClose}>
               People Counting
             </MenuItem>
-            <MenuItem component={Link} to="/qr-scanner" onClick={handleMenuClose}>
-              QR Scanner
-            </MenuItem>
+            <MenuItem onClick={handleQrMenuClick}>QR Options</MenuItem>
+            <Menu
+              id="qr-options-menu"
+              anchorEl={qrMenuOpen}
+              open={Boolean(qrMenuOpen)}
+              onClose={handleQrMenuClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              PaperProps={{
+                style: {
+                  backgroundColor: 'blue', // Set background color to green
+                  color: 'white',           // Set text color to white
+                },
+              }}
+            >
+              <MenuItem component={Link} to="/qr-scanner" onClick={handleQrMenuClose}>
+                QR Scanner
+              </MenuItem>
+              <MenuItem component={Link} to="/generate-qr" onClick={handleQrMenuClose}>
+                QR Generator
+              </MenuItem>
+            </Menu>
             <MenuItem component={Link} to="/people-analysis" onClick={handleMenuClose}>
               People Analysis
             </MenuItem>
@@ -76,10 +109,12 @@ const Navbar = ({ onLogout }) => {
           <Button color="inherit" component={Link} to="/dashboard">Dashboard</Button>
           <Button color="inherit" onClick={handleLogout}>Logout</Button>
         </Box>
-{/* Mobile Menu Icon positioned on the right */}
-<IconButton color="inherit" aria-label="open menu" onClick={handleMobileMenuOpen}>
+
+        {/* Mobile Menu Icon positioned on the right */}
+        <IconButton color="inherit" aria-label="open menu" onClick={handleMobileMenuOpen}>
           <MenuIcon />
         </IconButton>
+
         {/* Mobile Menu */}
         <Menu
           anchorEl={mobileMenuOpen}
@@ -97,6 +132,7 @@ const Navbar = ({ onLogout }) => {
           <MenuItem component={Link} to="/home" onClick={handleMobileMenuClose}>Home</MenuItem>
           <MenuItem component={Link} to="/camera-interface" onClick={handleMobileMenuClose}>Camera Interface</MenuItem>
           <MenuItem component={Link} to="/qr-scanner" onClick={handleMobileMenuClose}>QR Scanner</MenuItem>
+          <MenuItem component={Link} to="/generate-qr" onClick={handleMobileMenuClose}>QR Generator</MenuItem>
           <MenuItem component={Link} to="/people-analysis" onClick={handleMobileMenuClose}>People Analysis</MenuItem>
           <MenuItem component={Link} to="/attendance" onClick={handleMobileMenuClose}>Attendance</MenuItem>
           <MenuItem component={Link} to="/dashboard" onClick={handleMobileMenuClose}>Dashboard</MenuItem>
