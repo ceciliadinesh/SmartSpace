@@ -135,16 +135,7 @@ const Checkout = () => {
             </Button>
           </Form>
 
-          <div className="mt-4">
-            <h5>Pay with Google Pay</h5>
-            {qrCodeUrl && <img src={qrCodeUrl} alt="GPay QR Code" />}
-            <Button variant="primary" className="mt-3" onClick={simulateQRCodeScan} disabled={cart.length === 0}>
-              Simulate QR Code Scan
-            </Button>
-            <Button variant="primary" className="mt-3" onClick={handleGPay} disabled={cart.length === 0}>
-              Confirm GPay Payment
-            </Button>
-          </div>
+          
         </Card.Body>
       </Card>
     </div>
