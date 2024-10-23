@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   const [clickedFeature, setClickedFeature] = useState(null);
-  const [inView, setInView] = useState(Array(4).fill(false)); // Array to track visibility of each feature
+  const [inView, setInView] = useState(Array(5).fill(false)); // Update to track visibility of each feature
   const featureRefs = useRef([]);
   const textRefs = useRef([]); // Array of refs for text elements
   const [textInView, setTextInView] = useState(false); // Track visibility of the text
@@ -40,10 +40,17 @@ const HomePage = () => {
     },
     {
       id: 4,
-      title: 'Attendance via Face Recognition',
-      description: 'Streamline attendance management with facial recognition.',
+      title: 'Path Tracking using Heatmap',
+      description: 'Streamline path tracking with heatmaps to visualize movement patterns.',
       image: require('../images/feature4.jpg'),
-      link: '/face-recognition',
+      link: '/store-heatmap',
+    },
+    {
+      id: 5, // New feature ID
+      title: 'Attendance Tracking',
+      description: 'Track employee attendance accurately using our advanced system.',
+      image: require('../images/feature5.jpg'), // Make sure to provide the correct image path
+      link: '/attendance',
     },
   ];
 
