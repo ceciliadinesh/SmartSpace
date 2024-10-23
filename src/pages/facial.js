@@ -94,7 +94,7 @@ const Facial = () => {
       if(!localStorage.getItem("arr")){
         localStorage.setItem("arr",[])
       }
-      let x=[...localStorage.getItem("arr"),new faceapi.LabeledFaceDescriptors(name, [d.descriptor])]
+      let x=JSON.parse(localStorage.getItem("arr"))+[new faceapi.LabeledFaceDescriptors(name, [d.descriptor])]
       localStorage.setItem("arr",JSON.stringify(x))
       //console.log(JSON.stringify(x))
         
