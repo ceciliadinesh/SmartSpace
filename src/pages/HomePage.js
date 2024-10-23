@@ -50,7 +50,7 @@ const HomePage = () => {
       title: 'Attendance Tracking',
       description: 'Track employee attendance accurately using our advanced system.',
       image: require('../images/feature5.jpg'), // Make sure to provide the correct image path
-      link: '/attendance',
+      link: '/face',
     },
   ];
 

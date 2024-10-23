@@ -102,7 +102,7 @@ const Navbar = ({ onLogout }) => {
             <MenuItem component={Link} to="/people-analysis" onClick={handleMenuClose}>
               People Analysis
             </MenuItem>
-            <MenuItem component={Link} to="/attendance" onClick={handleMenuClose}>
+            <MenuItem component={Link} to="/face" onClick={handleMenuClose}>
               Attendance
             </MenuItem>
             <MenuItem component={Link} to="/store-heatmap" onClick={handleMenuClose}>
@@ -137,7 +137,7 @@ const Navbar = ({ onLogout }) => {
           <MenuItem component={Link} to="/qr-scanner" onClick={handleMobileMenuClose}>QR Scanner</MenuItem>
           <MenuItem component={Link} to="/generate-qr" onClick={handleMobileMenuClose}>QR Generator</MenuItem>
           <MenuItem component={Link} to="/people-analysis" onClick={handleMobileMenuClose}>People Analysis</MenuItem>
-          <MenuItem component={Link} to="/attendance" onClick={handleMobileMenuClose}>Attendance</MenuItem>
+          <MenuItem component={Link} to="/face" onClick={handleMobileMenuClose}>Attendance</MenuItem>
           <MenuItem component={Link} to="/dashboard" onClick={handleMobileMenuClose}>Dashboard</MenuItem>
           <MenuItem component={Link} to="/store-heatmap" onClick={handleMobileMenuClose}>Store Heatmap</MenuItem>
 
