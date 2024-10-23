@@ -19,6 +19,7 @@ import Chatbox from './pages/Chatbox';
 import './App.css'; 
 
 import supabase from './components/database';
+import Facial from './pages/facial';
 
 const App = () => {
   
@@ -83,6 +84,7 @@ const App = () => {
               <PaymentDone />
             </ProtectedRoute>
           } />
+          <Route path="/face" element={<Facial/>}/>
         </Routes>
       </div>
       {/* Chatbox Component */}
