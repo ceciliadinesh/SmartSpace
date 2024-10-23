@@ -96,77 +96,83 @@ const Chatbox = () => {
 
     const fetchPeopleCount = async (date) => {
         let responseMessage = '';
-        
+    
         try {
             const [year, month, day] = date.split('-');
-            const formattedDate = `${day}/${month}/${year}`; // Convert to DD/MM/YYYY format
-        
+            const formattedStartDate = `${year}-${month}-${day} 00:00:00`; // Start of the day
+            const formattedEndDate = `${year}-${month}-${day} 23:59:59`;   // End of the day
+    
+            console.log('Fetching data between:', formattedStartDate, 'and', formattedEndDate); // Debugging line
+    
             const { data, error } = await supabase
                 .from('peopledata')
-                .select('lastCount, Timestamp')
-                .like('Timestamp', `${formattedDate}%`);
-        
+                .select('lastCount, timestamp')
+                .gte('timestamp', formattedStartDate)
+                .lte('timestamp', formattedEndDate);
+    
             if (error) throw error;
+    
+            console.log('Data retrieved:', data); // Debugging line
     
             if (data.length === 0) {
                 responseMessage = `No records found for ${date}.`;
             } else {
-                const totalCount = data.reduce((acc, record) => acc + parseInt(record.lastCount), 0);
-                responseMessage = `Total people counted on ${formattedDate}: ${totalCount}`;
+                const totalCount = data.reduce((acc, record) => acc + parseInt(record.lastCount, 10) || 0, 0);
+                responseMessage = `Total people counted on ${date}: ${totalCount}`;
             }
         } catch (error) {
             console.error('Error fetching people count:', error);
             responseMessage = "Sorry, there was an error fetching the people count.";
         }
-        
+    
         return responseMessage;
     };
     
-const insertPeopleCount = async (lastCount) => {
-    const timestamp = new Date().toISOString(); // Get current timestamp in ISO format
-
-    try {
-        const { data, error } = await supabase
-            .from('peopledata')
-            .insert([{ lastCount, Timestamp: timestamp }]);
-
-        if (error) throw error;
-
-        return 'People count inserted successfully!';
-    } catch (error) {
-        console.error('Error inserting people count:', error);
-        return 'Error inserting people count.';
-    }
-};
-
+    
+    const insertPeopleCount = async (lastCount) => {
+        const timestamp = new Date().toISOString(); // Current timestamp in ISO format
+    
+        try {
+            const { data, error } = await supabase
+                .from('peopledata')
+                .insert([
+                    { lastCount, Timestamp: timestamp }
+                ]);
+    
+            if (error) throw error;
+    
+            return 'People count inserted successfully!';
+        } catch (error) {
+            console.error('Error inserting people count:', error);
+            return 'Error inserting people count.';
+        }
+    };
+    
 
     const handleOptionSelect = (option) => {
         const newMessage = { text: `You selected: ${options[option - 1]}`, sender: 'user' };
         setMessages((prev) => [...prev, newMessage]);
-        setSelectedOption(option); // Track selected option
+        setSelectedOption(option);
         setShowOptions(false);
-
+    
         const responseMessage = {
             text: "Please provide a date (YYYY-MM-DD):",
             sender: 'bot',
         };
         setMessages((prev) => [...prev, responseMessage]);
-
-        return;
     };
-
+    
     const handleSend = async (e) => {
         e.preventDefault();
         const newMessage = { text: input, sender: 'user' };
         setMessages((prev) => [...prev, newMessage]);
     
-        // If asking for a date
         if (selectedOption) {
             if (input.match(/^\d{4}-\d{2}-\d{2}$/)) {
                 let responseMessage = '';
     
                 if (selectedOption === 1) {
-                    responseMessage = await fetchSalesData(selectedOption, input);
+                    responseMessage = await fetchSalesData(selectedOption, input); // Call fetchSalesData here
                 } else if (selectedOption === 2) {
                     responseMessage = await fetchPeopleCount(input);
                 }
@@ -174,9 +180,8 @@ const insertPeopleCount = async (lastCount) => {
                 const botResponse = { text: responseMessage || "I'm not sure how to answer that.", sender: 'bot' };
                 setMessages((prev) => [...prev, botResponse]);
                 setInput('');
-                setSelectedOption(null); // Reset selected option
+                setSelectedOption(null);
     
-                // Ask if the user wants more help
                 const moreHelpMessage = { text: "Do you want more help? (Yes/No)", sender: 'bot' };
                 setMessages((prev) => [...prev, moreHelpMessage]);
                 return;
@@ -193,14 +198,13 @@ const insertPeopleCount = async (lastCount) => {
     
         // Handling "Yes" or "No" for more help
         if (input.toLowerCase() === 'yes') {
-            setShowOptions(true); // Show the options again
+            setShowOptions(true);
         } else if (input.toLowerCase() === 'no') {
             const thankYouMessage = { text: 'Thank you! If you want to start again, type "analysis".', sender: 'bot' };
             setMessages((prev) => [...prev, thankYouMessage]);
         } else if (input.toLowerCase() === 'analysis') {
-            handleGreetingClick(); // Restart the conversation
+            handleGreetingClick();
         } else {
-            // Default invalid response handling
             const botResponse = {
                 text: "Sorry, I can't understand you. Please try again or ask for help.",
                 sender: 'bot',
@@ -212,7 +216,6 @@ const insertPeopleCount = async (lastCount) => {
     };
     
     
-
     const toggleChatbox = () => {
         setIsOpen((prev) => !prev);
         if (!isOpen) {

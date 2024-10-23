@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -11,6 +11,8 @@ import QRScanner from './pages/QRScanner';
 import Checkout from './pages/Checkout';
 import PaymentDone from './pages/PaymentDone'; // Import PaymentDone
 import ProtectedRoute from './components/ProtectedRoute'; 
+import StoreHeatmap from './pages/StoreHeatmap'; // Ensure this is imported
+
 import GenerateQRCode from './pages/GenerateQRCode';
 import Chatbox from './pages/Chatbox';
 
@@ -49,6 +51,11 @@ const App = () => {
               <Dashboard />
             </ProtectedRoute>
           } />
+           <Route path="/store-heatmap" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <StoreHeatmap />
+            </ProtectedRoute>
+          } />
           <Route path="/camera-interface" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <CameraInterface />
@@ -59,6 +66,7 @@ const App = () => {
               <PeopleAnalysis />
             </ProtectedRoute>
           } />
+        
           <Route path="/qr-scanner" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <QRScanner />
@@ -69,8 +77,7 @@ const App = () => {
               <Checkout />
             </ProtectedRoute>
           } />
-          <Route path="/generate-qr" element={
-            <GenerateQRCode />} />
+          <Route path="/generate-qr" element={<GenerateQRCode />} />
 
           <Route path="/payment-done" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>

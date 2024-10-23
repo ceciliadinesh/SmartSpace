@@ -105,6 +105,9 @@ const Navbar = ({ onLogout }) => {
             <MenuItem component={Link} to="/attendance" onClick={handleMenuClose}>
               Attendance
             </MenuItem>
+            <MenuItem component={Link} to="/store-heatmap" onClick={handleMenuClose}>
+              Store Heatmap
+            </MenuItem>
           </Menu>
           <Button color="inherit" component={Link} to="/dashboard">Dashboard</Button>
           <Button color="inherit" onClick={handleLogout}>Logout</Button>
@@ -136,6 +139,8 @@ const Navbar = ({ onLogout }) => {
           <MenuItem component={Link} to="/people-analysis" onClick={handleMobileMenuClose}>People Analysis</MenuItem>
           <MenuItem component={Link} to="/attendance" onClick={handleMobileMenuClose}>Attendance</MenuItem>
           <MenuItem component={Link} to="/dashboard" onClick={handleMobileMenuClose}>Dashboard</MenuItem>
+          <MenuItem component={Link} to="/store-heatmap" onClick={handleMobileMenuClose}>Store Heatmap</MenuItem>
+
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </Toolbar>
