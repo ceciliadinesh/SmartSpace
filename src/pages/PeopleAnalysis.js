@@ -177,9 +177,11 @@ const PeopleAnalysis = () => {
 
   const saveDataToSupabase = async (totalMale, totalFemale) => {
     const currentDate = new Date();
-    const date = currentDate.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
-    const time = currentDate.toTimeString().split(' ')[0]; // Get time in HH:MM:SS format
-
+    
+    // Use Intl.DateTimeFormat for better control over date formatting
+    const date = currentDate.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+    const time = currentDate.toLocaleTimeString('en-GB', { hour12: false }); // Format as HH:MM:SS
+  
     try {
       const { data, error } = await supabase.from('analysis').insert([
         {
@@ -189,7 +191,7 @@ const PeopleAnalysis = () => {
           Time: time,
         },
       ]);
-
+  
       if (error) {
         console.error('Error inserting data into Supabase:', error.message);
       } else {
@@ -199,7 +201,7 @@ const PeopleAnalysis = () => {
       console.error('Error saving data to Supabase:', error);
     }
   };
-
+  
   return (
     <div className="camera-container d-flex flex-column align-items-center" style={{ minHeight: '100vh' }}>
       <h2 className="mb-4">Webcam People Analysis</h2>

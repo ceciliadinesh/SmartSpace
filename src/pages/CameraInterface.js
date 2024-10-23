@@ -9,7 +9,6 @@ const CameraInterface = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [peopleCount, setPeopleCount] = useState(0);
   const [lastCount, setLastCount] = useState(null);
-  const [timestamp, setTimestamp] = useState('');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const mediaStreamRef = useRef(null);
@@ -39,19 +38,23 @@ const CameraInterface = () => {
     }
     setShowCamera(false);
     
-    // Update last count and timestamp when stopping the camera
+    // Update last count when stopping the camera
     setLastCount(peopleCount);
     
-    setTimestamp(new Date().toLocaleString());
-    const {error}=await supabase.from("peopledata").insert({
-      "lastCount":peopleCount,
-      "Timestamp":new Date().toLocaleString()
-    })
-    setPeopleCount(0); // Reset current count
+    // Set current timestamp and format date and time
+    const currentTimestamp = new Date();
+    const formattedDate = `${currentTimestamp.getFullYear()}-${String(currentTimestamp.getMonth() + 1).padStart(2, '0')}-${String(currentTimestamp.getDate()).padStart(2, '0')}`;
+    const formattedTime = `${String(currentTimestamp.getHours()).padStart(2, '0')}:${String(currentTimestamp.getMinutes()).padStart(2, '0')}:${String(currentTimestamp.getSeconds()).padStart(2, '0')}`;
     
-    console.log(error)
+    const { error } = await supabase.from("peopledata").insert({
+      "lastCount": peopleCount,
+      "timestamp": `${formattedDate} ${formattedTime}` // Combine date and time
+    });
+    
+    setPeopleCount(0); // Reset current count
+    console.log(error);
   };
-
+  
   const detectObjects = (model) => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -132,7 +135,7 @@ const CameraInterface = () => {
       <h4>Current People Count: {peopleCount}</h4>
       {!showCamera && lastCount !== null && (
         <h4>
-          Last Count: {lastCount} at {timestamp}
+          Last Count: {lastCount}
         </h4>
       )}
     </div>
