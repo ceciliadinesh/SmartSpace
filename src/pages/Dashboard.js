@@ -33,7 +33,7 @@ const Dashboard = () => {
         const fetchData = async () => {
             try {
                 // Fetch people data
-                const response = await supabase.from("peopledata").select("lastCount, Timestamp");
+                const response = await supabase.from("peopledata").select("lastCount, timestamp");
                 const pay = await supabase.from("payments").select();
 
                 // Payment analysis
@@ -105,7 +105,25 @@ const Dashboard = () => {
 
         fetchData();
     }, []);
-
+    const aggregatePeopleCountByDate = (data) => {
+        const aggregatedData = {};
+    
+        data.forEach(entry => {
+            const date = new Date(entry.timestamp).toLocaleDateString(); // Format the date
+            if (aggregatedData[date]) {
+                aggregatedData[date] += entry.lastCount; // Sum the counts for the same date
+            } else {
+                aggregatedData[date] = entry.lastCount; // Initialize count for the date
+            }
+        });
+    
+        // Convert the aggregated object into arrays for labels and data
+        return {
+            labels: Object.keys(aggregatedData),
+            data: Object.values(aggregatedData),
+        };
+    };
+    
     const calculateFrequentItemSets = (transactions, minSupport) => {
         const itemCounts = {};
         transactions.forEach((transaction) => {
@@ -169,9 +187,9 @@ const Dashboard = () => {
 
     const calculateTimeDistribution = (data) => {
         const timeDistribution = { morning: 0, afternoon: 0, evening: 0, night: 0 };
-
+    
         data.forEach(entry => {
-            const hour = new Date(entry.Timestamp).getHours();
+            const hour = new Date(entry.timestamp).getHours();
             if (hour >= 5 && hour < 12) {
                 timeDistribution.morning += entry.lastCount;
             } else if (hour >= 12 && hour < 17) {
@@ -182,23 +200,29 @@ const Dashboard = () => {
                 timeDistribution.night += entry.lastCount;
             }
         });
-
+    
         setTimeDistributionData(timeDistribution);
     };
+    
 
-    const peopleCountChartData = {
-        labels: peopleData.map(x => x.Timestamp),
-        datasets: [
-            {
-                label: 'People Count',
-                data: peopleData.map((x) => x.lastCount),
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-            },
-        ],
-    };
 
+    const { labels, data } = aggregatePeopleCountByDate(peopleData);
+
+const peopleCountChartData = {
+    labels: labels, // Dates
+    datasets: [
+        {
+            label: 'People Count',
+            data: data, // Aggregated counts
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+        },
+    ],
+};
+
+    
+    
     const attendanceChartData = {
         labels: Object.keys(attendanceData),
         datasets: [
@@ -244,11 +268,10 @@ const Dashboard = () => {
                     timeDistributionData.night,
                 ],
                 backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-                borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 99, 132, 1)'],
-                borderWidth: 1,
             },
         ],
     };
+    
 
     return (
         <Container fluid className="dashboard-container d-flex flex-column" style={{ minHeight: '100vh' }}>
@@ -316,20 +339,20 @@ const Dashboard = () => {
                     </Col>
                 </Row>
             )}
-            {marketBasketData.associationRules.length > 0 && (
+            {/* Market Basket Analysis Results */}
                 <Card className="mt-4 shadow-sm" style={{ borderRadius: '10px' }}>
                     <Card.Body>
-                        <Card.Title>Market Basket Analysis - Association Rules</Card.Title>
-                        <ul className="list-unstyled">
+                        <Card.Title>Market Basket Analysis</Card.Title>
+                        <ul>
                             {marketBasketData.associationRules.map((rule, index) => (
-                                <li key={index} className="border-bottom py-2">
-                                    {rule.rule} (Support: {(rule.support * 100).toFixed(2)}%, Confidence: {(rule.confidence * 100).toFixed(2)}%, Lift: {rule.lift.toFixed(2)})
+                                <li key={index}>
+                                    <strong>{rule.rule}</strong> - Support: {(rule.support * 100).toFixed(2)}%, Confidence: {(rule.confidence * 100).toFixed(2)}%, Lift: {rule.lift.toFixed(2)}
                                 </li>
                             ))}
                         </ul>
                     </Card.Body>
                 </Card>
-            )}
+            
         </Container>
     );
 };
